@@ -34,6 +34,7 @@ jobs:
       - name: Test with Maven
         run: mvn test
   release:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Merge with Release
