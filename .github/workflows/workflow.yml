@@ -12,7 +12,7 @@ on:
       - dev
 
 jobs:
-  test:
+  test with maven:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -23,7 +23,7 @@ jobs:
           java-version: 11
       - name: Test with Maven
         run: mvn test
-  release:
+  merge dev to release branch:
     needs: test
     runs-on: ubuntu-latest
     steps:
