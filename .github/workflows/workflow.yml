@@ -1,5 +1,21 @@
 name: Run tests with Maven and Java 11
 
+env:
+  # replace "github_username" with your GitHub username
+  # replace "github.com/username/repo.git" with your GitHub repo path
+  # do NOT replace ${{secrets.GITHUB_TOKEN}}, GitHub will take care of it
+  MY_REPO: https://i386kernel:${{secrets.GITHUB_TOKEN}}@github.com/i386kernel/tanzu-SE-spring-petclinic.git
+
+
+  # replace "long-lived_branch_name" with your branch name
+  RELEASE_BRANCH: release
+
+  # replace it with the path to master repo
+  MASTER_REPO: https://github.com/i386kernel/tanzu-SE-spring-petclinic.git
+
+  # replace "master" with your master branch name
+  DEV_BRANCH: dev
+
 on:
   push:
     branches:
@@ -20,9 +36,12 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: dev
-      - name: Merge to release branch
-        run: git merge release
+      - name: Merge with Release
+        run: |
+          git clone ${{env.MY_REPO}} -b ${{env.DEV_BRANCH}} tmp
+          cd tmp
+          git config user.name "Automerge Bot"
+          git config user.email "bot@example.com"
+          git config pull.rebase false
+          git pull ${{env.MASTER_REPO}} ${{env.MASTER_BRANCH}}
+          git push
