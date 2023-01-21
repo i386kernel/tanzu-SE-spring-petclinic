@@ -1,0 +1,39 @@
+name: Run tests with Maven and Java 11
+
+env:
+  MY_REPO: https://i386kernel:${{secrets.GITHUB_TOKEN}}@github.com/i386kernel/tanzu-SE-spring-petclinic.git
+  RELEASE_BRANCH: release
+  MASTER_REPO: https://github.com/i386kernel/tanzu-SE-spring-petclinic.git
+  DEV_BRANCH: dev
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  test with maven:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Java 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Test with Maven
+        run: mvn test
+  merge dev to release branch:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge with Release
+        run: |
+          git clone ${{env.MY_REPO}} -b ${{env.DEV_BRANCH}} tmp
+          cd tmp
+          git config user.name "Automerge Bot"
+          git config user.email "bot@example.com"
+          git config pull.rebase false
+          git checkout ${{env.RELEASE_BRANCH}}
+          git merge ${{env.DEV_BRANCH}}
+          git push
