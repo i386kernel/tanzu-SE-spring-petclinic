@@ -25,7 +25,7 @@ jobs:
       - name: Test with Maven
         run: mvn test
   merge_dev_to_release_branch:
-    needs: test with maven
+    needs: test_with_maven
     runs-on: ubuntu-latest
     steps:
       - name: Merge with Release
